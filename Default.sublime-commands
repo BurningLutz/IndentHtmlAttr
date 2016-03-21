@@ -1,0 +1,20 @@
+[
+  {
+    "caption": "Preferences: IndentHtmlAttr Settings – Default",
+    "command": "open_file",
+    "args": {
+      "file": "${packages}/IndentHtmlAttr/IndentHtmlAttr.sublime-settings"
+    }
+  },
+  {
+    "caption": "Preferences: IndentHtmlAttr Settings – User",
+    "command": "open_file",
+    "args": {
+      "file": "${packages}/User/IndentHtmlAttr.sublime-settings"
+    }
+  },
+  {
+    "caption": "IndentHtmlAttr: Indent in current file",
+    "command": "indent_html_attr"
+  }
+]
