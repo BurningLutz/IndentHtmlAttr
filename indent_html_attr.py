@@ -46,9 +46,6 @@ class IndentHtmlAttrCommand(sublime_plugin.TextCommand):
     start_tags.reverse()
     ceiling = _get_setting("indent_ceiling")
     for r in start_tags:
-      if r.b - r.a <= ceiling:
-        continue
-
       start_tag = self.view.substr(r)
       start_tag_without_attr = self.attrs_pattern.sub("", start_tag)
       attr_start_from = self.attrs_pattern.search(start_tag).start()
@@ -61,9 +58,13 @@ class IndentHtmlAttrCommand(sublime_plugin.TextCommand):
       col = normed_indentation(self.view, r, tab_size)
       white_space = "\n" + "\t"*int(math.floor(float(col)/float(tab_size)) + 1)
 
-      new_start_tag = start_tag_without_attr[:attr_start_from] + white_space.join(attrs) + start_tag_without_attr[attr_start_from:]
+      new_start_tag_for_test_len = start_tag_without_attr[:attr_start_from] + " ".join(attrs) + start_tag_without_attr[attr_start_from:]
+      if len(new_start_tag_for_test_len) <= ceiling:
+        self.view.replace(edit, r, new_start_tag_for_test_len)
+      else:
+        new_start_tag = start_tag_without_attr[:attr_start_from] + white_space.join(attrs) + start_tag_without_attr[attr_start_from:]
+        self.view.replace(edit, r, new_start_tag)
 
-      self.view.replace(edit, r, new_start_tag)
 
 class IndentHtmlAttrOnSave(sublime_plugin.EventListener):
   def on_pre_save(self, view):
