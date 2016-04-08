@@ -2,4 +2,5 @@
   "allowed_syntaxes": ["html", "xml"],
   "indent_ceiling": 80,
   "indent_on_save": true,
+  "trailing": true,
 }

@@ -39,6 +39,7 @@ class IndentHtmlAttrCommand(sublime_plugin.TextCommand):
   def run(self, edit):
     current_syntax = self.view.settings().get("syntax")
     allowed_syntaxes = _get_setting("allowed_syntaxes")
+    trailing = _get_setting("trailing")
     if all(map(lambda s: current_syntax.upper().find(s.upper()) == -1, allowed_syntaxes)): # do nothing if syntax not matched.
       return
 
@@ -62,6 +63,9 @@ class IndentHtmlAttrCommand(sublime_plugin.TextCommand):
       if len(new_start_tag_for_test_len) <= ceiling:
         self.view.replace(edit, r, new_start_tag_for_test_len)
       else:
+        if trailing:
+          attrs.pop(0)
+          attrs[0] = " " + attrs[0]
         new_start_tag = start_tag_without_attr[:attr_start_from] + white_space.join(attrs) + start_tag_without_attr[attr_start_from:]
         self.view.replace(edit, r, new_start_tag)
 
