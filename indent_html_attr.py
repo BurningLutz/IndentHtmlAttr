@@ -1,9 +1,24 @@
 import sublime, sublime_plugin
 import re
+import math
 
 def _get_setting(key, default=None):
   settings = sublime.load_settings("IndentHtmlAttr.sublime-settings")
   return settings.get(key, default)
+
+def normed_indentation(view, r, tab_size):
+    pos = 0
+    ln = view.line(r)
+
+    for pt in range(ln.begin(), r.begin()):
+        ch = view.substr(pt)
+
+        if ch == '\t':
+            pos += tab_size - (pos % tab_size)
+        else:
+            pos+=1
+
+    return pos
 
 class IndentHtmlAttrCommand(sublime_plugin.TextCommand):
   def __init__(self, view):
@@ -43,17 +58,12 @@ class IndentHtmlAttrCommand(sublime_plugin.TextCommand):
       attrs.insert(0, "")
 
       tab_size = self.view.settings().get("tab_size")
-      row, col = self.view.rowcol(r.a)
-      white_space = "\n"
-      if col%tab_size == 0:
-        white_space += "\t"*(int(col/tab_size) + 1)
-      else:
-        white_space += " "*col + "\t"
+      col = normed_indentation(self.view, r, tab_size)
+      white_space = "\n" + "\t"*int(math.floor(float(col)/float(tab_size)) + 1)
 
       new_start_tag = start_tag_without_attr[:attr_start_from] + white_space.join(attrs) + start_tag_without_attr[attr_start_from:]
 
       self.view.replace(edit, r, new_start_tag)
-
 
 class IndentHtmlAttrOnSave(sublime_plugin.EventListener):
   def on_pre_save(self, view):
